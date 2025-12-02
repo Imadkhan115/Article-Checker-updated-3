@@ -1,30 +1,54 @@
 import streamlit as st
-from checker import check_articles
 
-st.title("Article Checker (a / an / the)")
-st.write("Upload a text file or type directly to check article usage.")
+# Article content
+article = """
+The Internet is a global network that connects millions of private, public, academic, business, and government networks. 
+It uses the standard Internet protocol suite (TCP/IP) to link devices worldwide. The Internet has greatly impacted 
+communication, commerce, entertainment, and education, enabling users to share and receive information faster than ever.
+"""
 
-option = st.radio("Choose input type:", ["Upload File", "Type Text"])
+# Define the questions and answers
+questions = [
+    {
+        "question": "What does TCP/IP stand for?",
+        "options": [
+            "A) Transfer Control Protocol/Internet Protocol",
+            "B) Transport Control Protocol/Internet Protocol",
+            "C) Transmission Communication Protocol/Internet Protocol",
+            "D) None of the above"
+        ],
+        "answer": "B) Transport Control Protocol/Internet Protocol"
+    },
+    {
+        "question": "Which industries have been impacted by the Internet?",
+        "options": [
+            "A) Only entertainment",
+            "B) Only communication",
+            "C) Communication, commerce, entertainment, and education",
+            "D) Only education"
+        ],
+        "answer": "C) Communication, commerce, entertainment, and education"
+    }
+]
 
-text = ""
+# Streamlit UI
+st.title("Interactive Article Quiz")
+st.write("Read the article below and answer the following questions:")
 
-if option == "Upload File":
-    uploaded = st.file_uploader("Upload a .txt file", type=["txt"])
-    if uploaded:
-        text = uploaded.read().decode("utf-8")
-        st.text_area("File Content", text, height=200)
+# Display the article
+st.markdown(article)
 
-else:
-    text = st.text_area("Enter your text here:")
-
-if st.button("Check Articles"):
-    if not text.strip():
-        st.warning("Please provide text.")
-    else:
-        issues = check_articles(text)
-        if issues:
-            st.error("Issues Found:")
-            for issue in issues:
-                st.write("- ", issue)
+# Function to ask the questions
+def ask_question(q):
+    st.subheader(q['question'])
+    selected_option = st.radio("Choose an option", q['options'])
+    
+    if st.button("Submit"):
+        if selected_option == q['answer']:
+            st.success("Correct!")
         else:
-            st.success("No article issues found!")
+            st.error(f"Wrong! The correct answer is: {q['answer']}")
+
+# Iterate over questions
+for q in questions:
+    ask_question(q)
